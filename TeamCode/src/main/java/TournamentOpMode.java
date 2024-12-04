@@ -10,6 +10,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+import java.io.File;
+import java.io.IOException;
+
 @TeleOp(name = "TournamentOpMode V1.0 [Updated 11/14/24]")
 public class TournamentOpMode extends LinearOpMode
 
@@ -29,8 +32,11 @@ public class TournamentOpMode extends LinearOpMode
 
     //region: PID Test
     double integralSum = 0;
-    double Kp = 0;
+    //Gradually increase Kp until it is somewhat stable
+    double Kp = 0.1;
+    //Change after Kp until we get some good shit
     double Ki = 0;
+    //Change after Kd until we get some even better shit
     double Kd = 0;
     double Kf = 0;
     ElapsedTime timer = new ElapsedTime();
@@ -39,6 +45,16 @@ public class TournamentOpMode extends LinearOpMode
 
     @Override
     public void runOpMode() throws InterruptedException {
+        try {
+            File myObj = new File("\"C:\\Users\\tidea_\\Downloads\\PIDTests\"");
+            if (myObj.createNewFile()) {
+                telemetry.addData("File creation status      ", "File created: " + myObj.getName());
+            } else {
+                telemetry.addData("File creation status      ", ("File already exists."));
+            }
+        } catch (IOException e) {
+            telemetry.addData("File creation status      ", ("An error occurred."));
+        }
 
 
         //region: Initialize Variables
@@ -92,6 +108,7 @@ public class TournamentOpMode extends LinearOpMode
         waitForStart();
         //Called continuously while OpMode is active
         while(opModeIsActive()) {
+
             //region: PID code
 //            armPivot.
 //            double power = PIDControl(1000, armPivot.getVelocity()) / 10;
@@ -140,13 +157,15 @@ public class TournamentOpMode extends LinearOpMode
             WheelMotorRightFront.setPower(WheelMotorFrontRightPower);
             WheelMotorRightBack.setPower(WheelMotorBackRightPower);
             //endregion
+            telemetry.addData("monkey nunts", "oo oo");
 
             //region: ArmPivot Controls
+
             if(gamepad2.b) {
-                armPivotTarget = 120;
+                armPivotTarget = 135;
             }
             else if(gamepad2.y) {
-                armPivotTarget = 80;
+                armPivotTarget = 70;
             }
             else if(gamepad2.x) {
                 armPivotTarget = 20;
