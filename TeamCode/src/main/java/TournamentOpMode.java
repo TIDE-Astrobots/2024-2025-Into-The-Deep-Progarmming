@@ -1,3 +1,4 @@
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -12,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import java.io.File;
 import java.io.IOException;
-
+@Config
 @TeleOp(name = "TournamentOpMode V1.0 [Updated 11/14/24]")
 public class TournamentOpMode extends LinearOpMode
 
@@ -45,18 +46,6 @@ public class TournamentOpMode extends LinearOpMode
 
     @Override
     public void runOpMode() throws InterruptedException {
-        try {
-            File myObj = new File("\"C:\\Users\\tidea_\\Downloads\\PIDTests\"");
-            if (myObj.createNewFile()) {
-                telemetry.addData("File creation status      ", "File created: " + myObj.getName());
-            } else {
-                telemetry.addData("File creation status      ", ("File already exists."));
-            }
-        } catch (IOException e) {
-            telemetry.addData("File creation status      ", ("An error occurred."));
-        }
-
-
         //region: Initialize Variables
         //These variables do NOT correspond to a physical object; they are entirely digital and for coding purposes.
         hangingMode = false;
@@ -157,7 +146,6 @@ public class TournamentOpMode extends LinearOpMode
             WheelMotorRightFront.setPower(WheelMotorFrontRightPower);
             WheelMotorRightBack.setPower(WheelMotorBackRightPower);
             //endregion
-            telemetry.addData("monkey nunts", "oo oo");
 
             //region: ArmPivot Controls
 
@@ -170,7 +158,6 @@ public class TournamentOpMode extends LinearOpMode
             else if(gamepad2.x) {
                 armPivotTarget = 20;
             }
-            telemetry.addData("Target: ", armPivotTarget);
             if(armPivot.getCurrentPosition() > armPivotTarget + 6) {
                 armPivot.setPower(-0.5);
             }
@@ -213,7 +200,6 @@ public class TournamentOpMode extends LinearOpMode
 //                armPivot.setTargetPosition(20);
 //                armPivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 //            }
-            telemetry.addData("ArmPivot Pos: ", armPivot.getCurrentPosition());
 //            if(gamepad2.dpad_up) {
 //                armPivot.setPower(1);
 //            }
@@ -267,8 +253,6 @@ public class TournamentOpMode extends LinearOpMode
             else if(gamepad2.left_bumper) {
                 clawServo.setPosition(0);
             }
-            //endregion
-
             telemetry.update();
         }
     }
