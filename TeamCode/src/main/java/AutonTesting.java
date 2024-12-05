@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import HelpfulFunctions.MotorFunctions;
+import HelpfulFunctions.Dijkstra.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ public class AutonTesting extends LinearOpMode {
     private float rot;
     private int task;
     private int target;
+    private Field gameField;
     //endregion
 
     @Override
@@ -47,6 +49,7 @@ public class AutonTesting extends LinearOpMode {
         rot = 180f;
         task = 0;
         target = Integer.MAX_VALUE;
+        gameField = new Field();
 
         //This section maps the variables to their corresponding motors/servos
         WheelMotorLeftFront = HelpfulFunctions.MotorFunctions.initializeMotor("WheelMotorLeftFront", hardwareMap);
@@ -82,6 +85,7 @@ public class AutonTesting extends LinearOpMode {
         //Wait for the user to press start
         waitForStart();
         //called continuously while OpMode is active
+        int taskNumber = 0;
         boolean runOnce = true;
         while(opModeIsActive()) {
             /*
@@ -90,40 +94,62 @@ public class AutonTesting extends LinearOpMode {
             float ticksPerRevolution = ((((1+(46/17))) * (1+(46/11))) * 28);
             ticksPerRevolution = 537.7
              */
-            //moveRobotInDirection("right", 0.25f);
-            if(task == 0 && runOnce) {
-                runOnce = false;
-                moveDistanceInInches(WheelMotors, 24);
-            }
-            if(task == 1 && runOnce) {
-                runOnce = false;
-                rotateInDegrees(180);
-            }
-            if(task == 2 && runOnce) {
-                runOnce = false;
-                moveDistanceInInchesRight(24);
+            List<List<String>> steps = gameField.getInstructionsList("1-1", "3-2");
+            while(opModeIsActive()) {
+                if(runOnce) {
+                    runOnce = false;
+                    List<String> taskList;
+                    try {
+                        taskList = steps.get(taskNumber);
+                    }
+                    catch(Exception e) {
+                        break;
+                    }
+                    moveDirectionInInches(taskList.get(0), 24);
+                }
+                target = WheelMotorLeftFront.getTargetPosition();
+
+                if(WheelMotorLeftFront.getCurrentPosition() == target) {
+                    runOnce = true;
+                    taskNumber += 1;
+                    target = 0;
+                }
             }
 
-            if(WheelMotorLeftFront.getCurrentPosition() == target) {
-                runOnce = true;
-                task += 1;
-                target = 0;
-            }
-            telemetry.addData("Task #", task);
-            telemetry.addData("Wheel Position (Ticks) ", WheelMotorLeftFront.getCurrentPosition());
-            telemetry.addData("Intended Position (Ticks) ", target);
-//            telemetry.addData("Wheel Position (Inches) ",(WheelMotorLeftFront.getCurrentPosition()) / ticksPerRevolution * wheelSideLength);
-//            telemetry.addData("Intended position (Inches) ", dist);
+//
+//
+//            if(task == 0 && runOnce) {
+//                runOnce = false;
+//                moveDirectionInInches("right", 24);
+//            }
+//            if(task == 1 && runOnce) {
+//                runOnce = false;
+//                moveDirectionInInches("left", 24);
+//            }
+//
+//
+//            if(WheelMotorLeftFront.getCurrentPosition() == target) {
+//                runOnce = true;
+//                task += 1;
+//                target = 0;
+//            }
 
-//            telemetry.addData("Wheel Position (Ticks) ", WheelMotorLeftFront.getCurrentPosition());
-//            telemetry.addData("Intended Position (Ticks) ", dist/wheelSideLength * ticksPerRevolution);
-//            telemetry.addData("Wheel Position (Inches) ",(WheelMotorLeftFront.getCurrentPosition()) / ticksPerRevolution * wheelSideLength);
-//            telemetry.addData("Intended position (Inches) ", dist);
-//            telemetry.addData("Wheel Position (Ticks) ", -WheelMotorLeftFront.getCurrentPosition());
-//            telemetry.addData("Intended Position (Ticks) ", 36/wheelCircumference * ticksPerRevolution);
-//            telemetry.addData("Wheel Position (Inches) ",(WheelMotorLeftFront.getCurrentPosition()) / ticksPerRevolution * wheelCircumference);
-//            telemetry.addData("Intended position (Inches) ", 18);
             telemetry.update();
+        }
+    }
+
+    public void moveDirectionInInches(String direction, float distance) {
+        if(direction == "right") {
+            moveDistanceInInchesRight(distance);
+        }
+        if(direction == "left") {
+            moveDistanceInInchesRight(-distance);
+        }
+        if(direction == "forward") {
+            moveDistanceInInches(distance);
+        }
+        if(direction == "back") {
+            moveDistanceInInches(-distance);
         }
     }
 public void rotateInDegrees(float degrees)
@@ -171,17 +197,14 @@ public void moveDistanceInInchesRight(float distance) {
             motor.setPower(0.25);
         }
 }
-    public void moveDistanceInInches(DcMotor[] motors, float distance) {
-        telemetry.addData("in the function: ", "confirmed");
-        for(DcMotor motor : motors) {
+    public void moveDistanceInInches(float distance) {
+        for(DcMotor motor : WheelMotors) {
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motor.setTargetPosition(-Math.round((distance/wheelCircumference) * ticksPerRevolution));
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
-        telemetry.addData("Motors set target position: ", "confirmed");
         target = -Math.round((distance/wheelCircumference) * ticksPerRevolution);
-        telemetry.addData("Target position set: ", target);
-        for(DcMotor motor: motors) {
+        for(DcMotor motor: WheelMotors) {
             motor.setPower(0.5);
         }
     }
