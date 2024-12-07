@@ -1,20 +1,20 @@
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import HelpfulFunctions.MotorFunctions;
+
 import HelpfulFunctions.Dijkstra.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Config
-@Autonomous(name = "Bottom Left V0.1.2")
-public class BottomLeftStart extends LinearOpMode {
+@Autonomous(name = "FICLK0")
+public class Bttmleft extends LinearOpMode {
     //region: Creating Variables
     //these variables correspond to servos and motors. They are displayed in order of distance to Control Hub.
     private DcMotor WheelMotorLeftFront;
@@ -31,7 +31,6 @@ public class BottomLeftStart extends LinearOpMode {
     private float wheelSideLength;
     private float dist;
     private float rot;
-    private int task;
     private int target;
     private Field gameField;
     private int taskNumber;
@@ -49,7 +48,6 @@ public class BottomLeftStart extends LinearOpMode {
         wheelSideLength = 1.486f;
         dist = -36f;
         rot = 180f;
-        task = 0;
         target = Integer.MAX_VALUE;
         gameField = new Field("3-1");
         taskNumber = 0;
@@ -99,22 +97,21 @@ public class BottomLeftStart extends LinearOpMode {
             ticksPerRevolution = 537.7
              */
 
-            List<List<String>> steps = new ArrayList<>();//gameField.getInstructionsList("3-1", "3-2");
-            List<String> step1 = new ArrayList<>();
-            step1.add("right");
+            List<String> steps = new ArrayList<>();//gameField.getInstructionsList("3-1", "3-2");
+            steps.add("right");
             telemetry.addData("STEPS", steps);
             telemetry.update();
             while(true) {
                 if(runOnce) {
                     runOnce = false;
-                    List<String> taskList;
+                    String task = "";
                     try {
-                        taskList = steps.get(taskNumber);
+                        task = steps.get(taskNumber);
                     }
                     catch(Exception e) {
                         break;
                     }
-                    moveDirectionInInches(taskList.get(0), 24);
+                    moveDirectionInInches(task, 24);
                     target = WheelMotorLeftFront.getTargetPosition();
                 }
 
@@ -128,24 +125,22 @@ public class BottomLeftStart extends LinearOpMode {
             resetTask();
             //steps = gameField.getInstructionsList("3-2", "6-2");
             steps = new ArrayList<>();//gameField.getInstructionsList("6-2", "2-2");
-            step1 = new ArrayList<>();
-            step1.add("forward");
-            step1.add("forward");
-            step1.add("forward");
-
+            steps.add("forward");
+            steps.add("forward");
+            steps.add("forward");
             telemetry.addData("STEPS", steps);
             telemetry.update();
             while(true) {
                 if(runOnce) {
                     runOnce = false;
-                    List<String> taskList;
+                    String task = "";
                     try {
-                        taskList = steps.get(taskNumber);
+                        task = steps.get(taskNumber);
                     }
                     catch(Exception e) {
                         break;
                     }
-                    moveDirectionInInches(taskList.get(0), 24);
+                    moveDirectionInInches(task, 24);
                     target = WheelMotorLeftFront.getTargetPosition();
                 }
 
@@ -158,24 +153,23 @@ public class BottomLeftStart extends LinearOpMode {
 
             resetTask();
             steps = new ArrayList<>();//gameField.getInstructionsList("6-2", "2-2");
-            step1 = new ArrayList<>();
-            step1.add("back");
-            step1.add("back");
-            step1.add("back");
-            step1.add("back");
+            steps.add("back");
+            steps.add("back");
+            steps.add("back");
+            steps.add("back");
             telemetry.addData("STEPS", steps);
             telemetry.update();
             while(true) {
                 if(runOnce) {
                     runOnce = false;
-                    List<String> taskList;
+                    String task = "";
                     try {
-                        taskList = steps.get(taskNumber);
+                        task = steps.get(taskNumber);
                     }
                     catch(Exception e) {
                         break;
                     }
-                    moveDirectionInInches(taskList.get(0), 24);
+                    moveDirectionInInches(task, 24);
                     target = WheelMotorLeftFront.getTargetPosition();
                 }
 
@@ -187,20 +181,25 @@ public class BottomLeftStart extends LinearOpMode {
             }
 
 
-            steps = gameField.getInstructionsList("2-2", "6-2");
+            resetTask();
+            steps = new ArrayList<>();//gameField.getInstructionsList("6-2", "2-2");
+            steps.add("forward");
+            steps.add("forward");
+            steps.add("forward");
+            steps.add("forward");
             telemetry.addData("STEPS", steps);
             telemetry.update();
             while(true) {
                 if(runOnce) {
                     runOnce = false;
-                    List<String> taskList;
+                    String task = "";
                     try {
-                        taskList = steps.get(taskNumber);
+                        task = steps.get(taskNumber);
                     }
                     catch(Exception e) {
                         break;
                     }
-                    moveDirectionInInches(taskList.get(0), 24);
+                    moveDirectionInInches(task, 24);
                     target = WheelMotorLeftFront.getTargetPosition();
                 }
 
@@ -263,8 +262,7 @@ public class BottomLeftStart extends LinearOpMode {
             moveDistanceInInches(-distance);
         }
     }
-    public void rotateInDegrees(float degrees)
-    {
+    public void rotateInDegrees(float degrees) {
         int magnitude = (int) Math.round(4600 * Math.sin((Math.PI/180) * degrees/6.325));
         WheelMotorLeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         WheelMotorLeftFront.setTargetPosition(magnitude);

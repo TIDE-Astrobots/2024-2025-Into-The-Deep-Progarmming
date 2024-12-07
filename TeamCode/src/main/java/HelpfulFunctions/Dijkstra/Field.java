@@ -1,6 +1,6 @@
 package HelpfulFunctions.Dijkstra;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
+//import com.qualcomm.robotcore.hardware.DcMotor;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.function.Predicate;
 
 public class Field {
     public Graph fieldGraph;
-    public String currentLocation;
+    //    public String currentLocation;
     public Field(String startingLocation) {
         Node OneA = new Node("1-1");
         Node TwoA = new Node("2-1");
@@ -48,11 +48,14 @@ public class Field {
         OneB.addDestination(OneA, 24);
         OneB.addDestination(OneC, 24);
         OneB.addDestination(TwoB, 24);
-        OneC.addDestination(OneC, 24);
+        OneC.addDestination(OneB, 24);
         OneC.addDestination(OneD, 24);
+        OneC.addDestination(TwoC, 24);
         OneD.addDestination(OneC, 24);
+        OneD.addDestination(TwoD, 24);
         OneD.addDestination(OneE, 24);
         OneE.addDestination(OneD, 24);
+        OneE.addDestination(TwoE, 24);
         OneE.addDestination(OneF, 24);
         OneF.addDestination(OneE, 24);
         OneF.addDestination(TwoF, 24);
@@ -77,6 +80,7 @@ public class Field {
         ThreeA.addDestination(TwoA, 24);
         ThreeB.addDestination(FourB, 24);
         ThreeB.addDestination(TwoB, 24);
+        ThreeB.addDestination(ThreeA, 24);
         ThreeF.addDestination(FourF, 24);
         ThreeF.addDestination(TwoF, 24);
         FourA.addDestination(FourB, 24);
@@ -153,8 +157,6 @@ public class Field {
         fieldGraph.addNode(FourF);
         fieldGraph.addNode(FiveF);
         fieldGraph.addNode(SixF);
-
-        this.currentLocation = startingLocation;
     }
 
     public Graph spfGraph(Node origin) {
@@ -163,9 +165,15 @@ public class Field {
 
     public List<List<String>> getInstructionsList(String origin, String target) {
         Node originNode = getNodeFromName(origin);
+        System.out.println(originNode.getName() + " ");
         Node targetNode = getNodeFromName(target);
-        this.currentLocation = target;
-        List<Node> path = getPathNodes(origin, target);
+        List<Node> path;
+        if((int) origin.charAt(0) < (int) target.charAt(0)) {
+            path = getPathNodesInverse(origin, target);
+        }
+        else {
+            path = getPathNodes(origin, target);
+        }
         List<List<String>> directions = new ArrayList<>();
 
         for(int i = 0; i < path.size() + 1; i++) {
@@ -177,6 +185,9 @@ public class Field {
             catch(Exception e) {
                 lastNode = originNode;
             }
+            for(Node node : path) {
+                System.out.print(node.getName() + " ");
+            }
 
             Node currentNode;
             int distance;
@@ -187,7 +198,9 @@ public class Field {
                 currentNode = path.get(i);
                 distance = currentNode.getDistance();
             }
+
             if(distance != 0) {
+                System.out.println(currentNode.getName());
                 if((int) currentNode.getName().charAt(2) < (int) lastNode.getName().charAt(2)) {
                     currentDirections.add("left");
                     currentDirections.add(Integer.toString(distance));
@@ -199,6 +212,7 @@ public class Field {
                     directions.add(currentDirections);
                 }
                 else if ((int) currentNode.getName().charAt(0) < (int) lastNode.getName().charAt(0)) {
+                    System.out.println("IM BUSSTIIING");
                     currentDirections.add("back");
                     currentDirections.add(Integer.toString(distance));
                     directions.add(currentDirections);
@@ -210,8 +224,6 @@ public class Field {
                 }
             }
         }
-
-
         return directions;
     }
 
@@ -286,6 +298,22 @@ public class Field {
         return emptyList;
     }
 
+    public List<Node> getPathNodesInverse(String origin, String target) {
+        Node originNode = getNodeFromName(origin);
+        Node targetNode = getNodeFromName(target);
+
+        Graph graph = spfGraph(targetNode);
+        for(Node node : graph.getNodes()) {
+            if(node == originNode) {
+                for(Node othernode: node.getShortestPath()) {
+                }
+                return node.getShortestPath();
+            }
+        }
+        List<Node> emptyList = new ArrayList<>();
+        return emptyList;
+    }
+
     public String getPathNodeNames(String origin, String target) {
         Node originNode = getNodeFromName(origin);
         Node targetNode = getNodeFromName(target);
@@ -312,6 +340,8 @@ public class Field {
         throw new IllegalArgumentException("Invalid argument: " + name + " is not a node.");
 
     }
+
+
 
 //    public interface BiConsumer<T, U> {
 //        void accept(T t, U u);
