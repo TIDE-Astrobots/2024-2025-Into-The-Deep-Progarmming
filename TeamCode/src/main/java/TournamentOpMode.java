@@ -59,8 +59,8 @@ public class TournamentOpMode extends LinearOpMode
         WheelMotorRightBack = HelpfulFunctions.MotorFunctions.initializeMotor("WheelMotorRightBack", hardwareMap);
 
         //This section sets the directions of motors which should move in reverse so the robot works.
-        WheelMotorRightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        WheelMotorRightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        WheelMotorLeftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        WheelMotorLeftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //This section initializes the motors that control the extension arms and sets their settings
         extendoLeft = hardwareMap.dcMotor.get("extendoLeft");
@@ -99,6 +99,7 @@ public class TournamentOpMode extends LinearOpMode
         waitForStart();
         //Called continuously while OpMode is active
         while(opModeIsActive()) {
+
             telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
             //region: PID code
@@ -112,36 +113,26 @@ public class TournamentOpMode extends LinearOpMode
                 imu.resetYaw();
             }
 
-            //region: Move the wheels when the user moves the joystick
-            double x = -gamepad1.left_stick_x; // Remember, Y stick value is reversed
-            double y = gamepad1.left_stick_y;
+            double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
+            double x = -gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x;
-
-            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-
-            // Rotate the movement direction counter to the bot's rotation
-            double rotX = -(x * Math.cos(-botHeading) - y * Math.sin(-botHeading));
-            double rotY = -(x * Math.sin(-botHeading) + y * Math.cos(-botHeading));
-
-            rotX = rotX * 1.1;  // Counteract imperfect strafing
 
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio,
             // but only if at least one is out of the range [-1, 1]
-            double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-            double WheelMotorFrontLeftPower = (rotY + rotX + rx) / denominator;
-            double WheelMotorBackLeftPower = (rotY - rotX + rx) / denominator;
-            double WheelMotorFrontRightPower = (rotY - rotX - rx) / denominator;
-            double WheelMotorBackRightPower = (rotY + rotX - rx) / denominator;
-
+            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+            
             //Allow the users to move at half speed if they are holding A
-            if(gamepad1.a) {
-                denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1) * 2;
-                WheelMotorFrontLeftPower = (rotY + rotX + rx) / denominator;
-                WheelMotorBackLeftPower = (rotY - rotX + rx) / denominator;
-                WheelMotorFrontRightPower = (rotY - rotX - rx) / denominator;
-                WheelMotorBackRightPower = (rotY + rotX - rx) / denominator;
+            if (gamepad1.a) {
+                //Apply half the power
+                denominator = denominator*2;
             }
+
+            double WheelMotorFrontLeftPower = (y + x + rx) / denominator;
+            double WheelMotorBackLeftPower = (y - x + rx) / denominator;
+            double WheelMotorFrontRightPower = (y - x - rx) / denominator;
+            double WheelMotorBackRightPower = (y + x - rx) / denominator;
+//
 
             //Apply the power
             WheelMotorLeftFront.setPower(WheelMotorFrontLeftPower);

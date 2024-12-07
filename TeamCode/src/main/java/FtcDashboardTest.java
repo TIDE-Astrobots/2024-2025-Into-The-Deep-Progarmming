@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp(name="FtcDashboardTest", group="Linear")
 public class FtcDashboardTest extends LinearOpMode {
     Integer peebis;
+
     @Override
     public void runOpMode() throws InterruptedException {
         peebis = 0;
