@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Config
-@Autonomous(name = "AutonTesting V1.1")
-public class AutonTesting extends LinearOpMode {
+@Autonomous(name = "Bottom Left V0.1.2")
+public class BottomLeftStart extends LinearOpMode {
     //region: Creating Variables
     //these variables correspond to servos and motors. They are displayed in order of distance to Control Hub.
     private DcMotor WheelMotorLeftFront;
@@ -34,6 +34,8 @@ public class AutonTesting extends LinearOpMode {
     private int task;
     private int target;
     private Field gameField;
+    private int taskNumber;
+    private boolean runOnce;
     //endregion
 
     @Override
@@ -50,6 +52,9 @@ public class AutonTesting extends LinearOpMode {
         task = 0;
         target = Integer.MAX_VALUE;
         gameField = new Field("3-1");
+        taskNumber = 0;
+        runOnce = true;
+
 
         //This section maps the variables to their corresponding motors/servos
         WheelMotorLeftFront = HelpfulFunctions.MotorFunctions.initializeMotor("WheelMotorLeftFront", hardwareMap);
@@ -85,8 +90,7 @@ public class AutonTesting extends LinearOpMode {
         //Wait for the user to press start
         waitForStart();
         //called continuously while OpMode is active
-        int taskNumber = 0;
-        boolean runOnce = true;
+
         while(opModeIsActive()) {
             /*
             Measurements:
@@ -94,8 +98,12 @@ public class AutonTesting extends LinearOpMode {
             float ticksPerRevolution = ((((1+(46/17))) * (1+(46/11))) * 28);
             ticksPerRevolution = 537.7
              */
-            List<List<String>> steps = gameField.getInstructionsList("1-1", "1-2");
-            while(opModeIsActive()) {
+
+            List<List<String>> steps = gameField.getInstructionsList("3-1", "3-2");
+            telemetry.addData("Directions 1:", gameField.getInstructionsString(gameField.currentLocation, "3-2"));
+            telemetry.addData("Current position", gameField.currentLocation);
+            telemetry.update();
+            while(true) {
                 if(runOnce) {
                     runOnce = false;
                     List<String> taskList;
@@ -106,15 +114,72 @@ public class AutonTesting extends LinearOpMode {
                         break;
                     }
                     moveDirectionInInches(taskList.get(0), 24);
+                    target = WheelMotorLeftFront.getTargetPosition();
                 }
-                target = WheelMotorLeftFront.getTargetPosition();
 
                 if(WheelMotorLeftFront.getCurrentPosition() == target) {
                     runOnce = true;
                     taskNumber += 1;
-                    target = 0;
+                    target = Integer.MAX_VALUE;
                 }
             }
+
+            resetTask();
+            steps = gameField.getInstructionsList("3-2", "6-2");
+            while(true) {
+                if(runOnce) {
+                    runOnce = false;
+                    List<String> taskList;
+                    try {
+                        taskList = steps.get(taskNumber);
+                    }
+                    catch(Exception e) {
+                        break;
+                    }
+                    moveDirectionInInches(taskList.get(0), 24);
+                    target = WheelMotorLeftFront.getTargetPosition();
+                }
+
+                if(WheelMotorLeftFront.getCurrentPosition() == target) {
+                    runOnce = true;
+                    taskNumber += 1;
+                    target = Integer.MAX_VALUE;
+                }
+            }
+
+            resetTask();
+            steps = gameField.getInstructionsList("6-2", "2-2");
+            telemetry.addData("Directions 1:", gameField.getInstructionsString(gameField.currentLocation, "3-2"));
+            telemetry.addData("Current position", gameField.currentLocation);
+            telemetry.update();
+            while(true) {
+                if(runOnce) {
+                    runOnce = false;
+                    List<String> taskList;
+                    try {
+                        taskList = steps.get(taskNumber);
+                    }
+                    catch(Exception e) {
+                        break;
+                    }
+                    moveDirectionInInches(taskList.get(0), 24);
+                    target = WheelMotorLeftFront.getTargetPosition();
+                }
+
+                if(WheelMotorLeftFront.getCurrentPosition() == target) {
+                    runOnce = true;
+                    taskNumber += 1;
+                    target = Integer.MAX_VALUE;
+                }
+            }
+
+
+            telemetry.update();
+            stop();
+            break;
+            /*
+            PSUEDOSTEPS
+             */
 
 //
 //
@@ -134,10 +199,14 @@ public class AutonTesting extends LinearOpMode {
 //                target = 0;
 //            }
 
-            telemetry.update();
         }
     }
 
+    public void resetTask() {
+        taskNumber = 0;
+        target = Integer.MAX_VALUE;
+        runOnce = true;
+    }
     public void moveDirectionInInches(String direction, float distance) {
         if(direction == "right") {
             moveDistanceInInchesRight(distance);
@@ -152,30 +221,30 @@ public class AutonTesting extends LinearOpMode {
             moveDistanceInInches(-distance);
         }
     }
-public void rotateInDegrees(float degrees)
-{
-    int magnitude = (int) Math.round(4600 * Math.sin((Math.PI/180) * degrees/6.325));
-    WheelMotorLeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    WheelMotorLeftFront.setTargetPosition(magnitude);
-    WheelMotorLeftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    target = magnitude;
+    public void rotateInDegrees(float degrees)
+    {
+        int magnitude = (int) Math.round(4600 * Math.sin((Math.PI/180) * degrees/6.325));
+        WheelMotorLeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        WheelMotorLeftFront.setTargetPosition(magnitude);
+        WheelMotorLeftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        target = magnitude;
 
-    WheelMotorLeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    WheelMotorLeftBack.setTargetPosition(magnitude);
-    WheelMotorLeftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        WheelMotorLeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        WheelMotorLeftBack.setTargetPosition(magnitude);
+        WheelMotorLeftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-    WheelMotorRightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    WheelMotorRightFront.setTargetPosition(-magnitude);
-    WheelMotorRightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        WheelMotorRightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        WheelMotorRightFront.setTargetPosition(-magnitude);
+        WheelMotorRightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-    WheelMotorRightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    WheelMotorRightBack.setTargetPosition(-magnitude);
-    WheelMotorRightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    for(DcMotor motor : WheelMotors) {
-        motor.setPower(0.25);
+        WheelMotorRightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        WheelMotorRightBack.setTargetPosition(-magnitude);
+        WheelMotorRightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        for(DcMotor motor : WheelMotors) {
+            motor.setPower(0.25);
+        }
     }
-}
-public void moveDistanceInInchesRight(float distance) {
+    public void moveDistanceInInchesRight(float distance) {
         int magnitude = Math.round((distance/wheelSideLength) * (ticksPerRevolution * (wheelSideLength/wheelCircumference)));
         WheelMotorLeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         WheelMotorLeftFront.setTargetPosition(magnitude);
@@ -196,7 +265,7 @@ public void moveDistanceInInchesRight(float distance) {
         for(DcMotor motor : WheelMotors) {
             motor.setPower(0.25);
         }
-}
+    }
     public void moveDistanceInInches(float distance) {
         for(DcMotor motor : WheelMotors) {
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

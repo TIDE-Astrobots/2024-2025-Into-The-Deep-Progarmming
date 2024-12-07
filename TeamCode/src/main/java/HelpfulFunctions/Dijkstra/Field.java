@@ -11,7 +11,8 @@ import java.util.function.Predicate;
 
 public class Field {
     public Graph fieldGraph;
-    public Field() {
+    public String currentLocation;
+    public Field(String startingLocation) {
         Node OneA = new Node("1-1");
         Node TwoA = new Node("2-1");
         Node ThreeA = new Node("3-1");
@@ -152,6 +153,8 @@ public class Field {
         fieldGraph.addNode(FourF);
         fieldGraph.addNode(FiveF);
         fieldGraph.addNode(SixF);
+
+        this.currentLocation = startingLocation;
     }
 
     public Graph spfGraph(Node origin) {
@@ -161,6 +164,7 @@ public class Field {
     public List<List<String>> getInstructionsList(String origin, String target) {
         Node originNode = getNodeFromName(origin);
         Node targetNode = getNodeFromName(target);
+        this.currentLocation = target;
         List<Node> path = getPathNodes(origin, target);
         List<List<String>> directions = new ArrayList<>();
 
@@ -183,32 +187,34 @@ public class Field {
                 currentNode = path.get(i);
                 distance = currentNode.getDistance();
             }
-
-            if((int) currentNode.getName().charAt(2) < (int) lastNode.getName().charAt(2)) {
-                currentDirections.add("left");
-                currentDirections.add(Integer.toString(distance));
-                directions.add(currentDirections);
-            }
-            else if ((int) currentNode.getName().charAt(2) > (int) lastNode.getName().charAt(2)) {
-                currentDirections.add("right");
-                currentDirections.add(Integer.toString(distance));
-                directions.add(currentDirections);
-            }
-            else if ((int) currentNode.getName().charAt(0) < (int) lastNode.getName().charAt(0)) {
-                currentDirections.add("back");
-                currentDirections.add(Integer.toString(distance));
-                directions.add(currentDirections);
-            }
-            else if ((int) currentNode.getName().charAt(0) > (int) lastNode.getName().charAt(0)) {
-                currentDirections.add("forward");
-                currentDirections.add(Integer.toString(distance));
-                directions.add(currentDirections);
+            if(distance != 0) {
+                if((int) currentNode.getName().charAt(2) < (int) lastNode.getName().charAt(2)) {
+                    currentDirections.add("left");
+                    currentDirections.add(Integer.toString(distance));
+                    directions.add(currentDirections);
+                }
+                else if ((int) currentNode.getName().charAt(2) > (int) lastNode.getName().charAt(2)) {
+                    currentDirections.add("right");
+                    currentDirections.add(Integer.toString(distance));
+                    directions.add(currentDirections);
+                }
+                else if ((int) currentNode.getName().charAt(0) < (int) lastNode.getName().charAt(0)) {
+                    currentDirections.add("back");
+                    currentDirections.add(Integer.toString(distance));
+                    directions.add(currentDirections);
+                }
+                else if ((int) currentNode.getName().charAt(0) > (int) lastNode.getName().charAt(0)) {
+                    currentDirections.add("forward");
+                    currentDirections.add(Integer.toString(distance));
+                    directions.add(currentDirections);
+                }
             }
         }
 
 
         return directions;
     }
+
     public String getInstructionsString(String origin, String target) {
         Node originNode = getNodeFromName(origin);
         Node targetNode = getNodeFromName(target);

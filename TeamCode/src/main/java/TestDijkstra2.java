@@ -21,14 +21,28 @@ TODO: Have it set to a sequence so that it does all this without me having to wo
 public class TestDijkstra2 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Field field = new Field();
+        Field field = new Field("3-1");
         waitForStart();
         while(opModeIsActive()) {
-            telemetry.addData("Distance between 2-2 and 6-5: ", field.getPathDistance("2-2", "6-5"));
-            telemetry.addData("Path from 1-1 and 5-5: ", field.getPathNodes("2-2", "6-5"));
-            telemetry.addData("Path from 1-1 and 5-5 (readable): ", field.getPathNodeNames("2-2", "6-5"));
-            telemetry.addData("Directions: ", field.getInstructionsString("2-2", "6-5"));
-            telemetry.addData("Directions in robot form: ", field.getInstructionsList("2-2", "6-5"));
+            telemetry.addData("Distance between 6-2 and 2-2: ", field.getPathDistance("3-1", "3-2"));
+            telemetry.addData("Path from 6-2 and 2-2: ", field.getPathNodes("3-1", "3-2"));
+            telemetry.addData("Path from 6-2 and 2-2 (readable): ", field.getPathNodeNames("3-1", "3-2"));
+            telemetry.addData("Directions: ", field.getInstructionsString("3-1", "3-2"));
+            telemetry.addData("Directions in robot form: ", field.getInstructionsList("3-1", "3-2"));
+
+            telemetry.addData("Distance between 6-2 and 2-2: ", field.getPathDistance("3-2", "6-2"));
+            telemetry.addData("Path from 6-2 and 2-2: ", field.getPathNodes("3-2", "6-2"));
+            telemetry.addData("Path from 6-2 and 2-2 (readable): ", field.getPathNodeNames("3-2", "6-2"));
+            telemetry.addData("Directions: ", field.getInstructionsString("3-2", "6-2"));
+            telemetry.addData("Directions in robot form: ", field.getInstructionsList("3-2", "6-2"));
+
+            telemetry.addData("Distance between 6-2 and 2-2: ", field.getPathDistance("6-2", "2-2"));
+            telemetry.addData("Path from 6-2 and 2-2: ", field.getPathNodes("6-2", "2-2"));
+            telemetry.addData("Path from 6-2 and 2-2 (readable): ", field.getPathNodeNames("6-2", "2-2"));
+            telemetry.addData("Directions: ", field.getInstructionsString("6-2", "2-2"));
+            telemetry.addData("Directions in robot form: ", field.getInstructionsList("6-2", "2-2"));
+
+
             telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
             telemetry.update();
         }
