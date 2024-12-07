@@ -16,7 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import java.io.File;
 import java.io.IOException;
 @Config
-@TeleOp(name = "TournamentOpMode V1.0 [Updated 11/14/24]")
+@TeleOp(name = "TournamentOpMode V1.0 [Updated 12/5/24]")
 public class TournamentOpMode extends LinearOpMode
 
 {
@@ -72,13 +72,13 @@ public class TournamentOpMode extends LinearOpMode
 
 //        armPivot = HelpfulFunctions.MotorFunctions.initializeMotor("armPivot", hardwareMap);
         armPivot = hardwareMap.get(DcMotorEx.class,"armPivot");
-        armPivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        armPivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armPivot.setDirection(DcMotorSimple.Direction.REVERSE);
-        armPivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armPivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        armPivot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        armPivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        armPivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armPivot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         armPivotTarget = 0;
-        armPivot.setTargetPositionTolerance(8);
+//        armPivot.setTargetPositionTolerance(8);
 
         //This section initializes the claw servo
         clawServo = hardwareMap.servo.get("clawServo");
@@ -120,8 +120,8 @@ public class TournamentOpMode extends LinearOpMode
             double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
             // Rotate the movement direction counter to the bot's rotation
-            double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-            double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+            double rotX = -(x * Math.cos(-botHeading) - y * Math.sin(-botHeading));
+            double rotY = -(x * Math.sin(-botHeading) + y * Math.cos(-botHeading));
 
             rotX = rotX * 1.1;  // Counteract imperfect strafing
 
@@ -151,50 +151,36 @@ public class TournamentOpMode extends LinearOpMode
             //endregion
 
             //region: ArmPivot Controls
-
-            if(gamepad2.b) {
-                armPivotTarget = 135;
+            if(gamepad2.triangle) {
+                armPivot.setPower(0.75);
             }
-            else if(gamepad2.y) {
-                armPivotTarget = 70;
-            }
-            else if(gamepad2.x) {
-                armPivotTarget = 20;
-            }
-            if(armPivot.getCurrentPosition() > armPivotTarget) {
-                armPivot.setPower(-0.5 * PIDControl(armPivotTarget, armPivot.getCurrentPosition()));
-            }
-//            else if (armPivot.getCurrentPosition() > armPivotTarget - 6 && armPivot.getCurrentPosition() < armPivotTarget + 6) {
-//                armPivot.setPower(0);
-//            }
-            else if(armPivot.getCurrentPosition() < armPivotTarget) {
-                armPivot.setPower(0.5);
+            else if (gamepad2.cross) {
+                armPivot.setPower(-0.75);
             }
             else {
                 armPivot.setPower(0);
             }
+//            if(gamepad2.b) {
+//                armPivotTarget = 135;
+//            }
+//            else if(gamepad2.y) {
+//                armPivotTarget = 70;
+//            }
+//            else if(gamepad2.x) {
+//                armPivotTarget = 20;
+//            }
+//
+//
+//            if(armPivot.getCurrentPosition() > armPivotTarget) {
+//                armPivot.setPower(-0.5);
+//            }
+//            else if(armPivot.getCurrentPosition() < armPivotTarget) {
+//                armPivot.setPower(0.5);
+//            }
+//            else {
+//                armPivot.setPower(0);
+//            }
 
-            //FIRST
-            if(gamepad2.dpad_up) {
-                Kp += 0.1;
-            }
-            else if(gamepad2.dpad_down) {
-                Kp -= 0.1;
-            }
-
-            if(gamepad2.dpad_right) {
-                Ki += 0.1;
-            }
-            else if(gamepad2.dpad_left) {
-                Ki -= 0.1;
-            }
-
-            if(gamepad2.right_bumper) {
-                Kd += 0.01;
-            }
-            else if(gamepad2.left_bumper) {
-                Kd -= 0.1;
-            }
 
 //            if(gamepad2.b) {
 //                if(armPivot.getCurrentPosition() < 120) {
@@ -243,49 +229,46 @@ public class TournamentOpMode extends LinearOpMode
             //endregion
 
             //region: Extendo arm controls
-//            if(gamepad2.dpad_right) {
-//                extendoRight.setPower(1);
-//                extendoLeft.setPower(1);
-//            }
-//            else if(gamepad2.dpad_left) {
-//                extendoLeft.setPower(-1);
-//                extendoRight.setPower(-1);
-//            }
-//            else if(gamepad2.a) {
-//                //Make the robot start or stop hanging by setting hangingMode to true or false
-//                if(hangingMode) {
-//                    hangingMode = false;
-//                }
-//                else {
-//                    hangingMode = true;
-//                }
-//            }
-//            else if(hangingMode) {
-//                //If the robot has entered hanging mode, keep it hanging!
-//                extendoLeft.setPower(1);
-//                extendoRight.setPower(1);
-//            }
-//            else {
-//                //If the robot is not hanging and nothing is being pressed, apply no power to the arm
-//                extendoLeft.setPower(0);
-//                extendoRight.setPower(0);
-//            }
+            if(gamepad2.dpad_up) {
+                extendoRight.setPower(1);
+                extendoLeft.setPower(1);
+            }
+            else if(gamepad2.dpad_down) {
+                extendoLeft.setPower(-1);
+                extendoRight.setPower(-1);
+            }
+            else if(gamepad2.circle) {
+                //Make the robot start or stop hanging by setting hangingMode to true or false
+                if(hangingMode) {
+                    hangingMode = false;
+                }
+                else {
+                    hangingMode = true;
+                }
+            }
+            else if(hangingMode) {
+                //If the robot has entered hanging mode, keep it hanging!
+                extendoLeft.setPower(-1);
+                extendoRight.setPower(-1);
+            }
+            else {
+                //If the robot is not hanging and nothing is being pressed, apply no power to the arm
+                extendoLeft.setPower(0);
+                extendoRight.setPower(0);
+            }
             //endregion
 
             //region: Claw controls
-//            if(gamepad2.right_bumper) {
-//                clawServo.setPosition(1);
-//            }
-//            else if(gamepad2.left_bumper) {
-//                clawServo.setPosition(0);
-//            }
+            if(gamepad2.right_bumper) {
+                clawServo.setPosition(clawServo.getPosition() + 0.05);
+            }
+            else if(gamepad2.left_bumper) {
+                clawServo.setPosition(clawServo.getPosition() - 0.05);
+            }
             //endregion
 
-            telemetry.addData("target position", armPivotTarget);
-            telemetry.addData("real position", armPivot.getCurrentPosition());
-            telemetry.addData("Ki", Ki);
-            telemetry.addData("Kp", Kp);
-            telemetry.addData("Kd", Kd);
+            telemetry.addData("Arm position", armPivot.getCurrentPosition());
+            telemetry.addData("Claw Position", clawServo.getPosition());
             telemetry.update();
         }
     }
