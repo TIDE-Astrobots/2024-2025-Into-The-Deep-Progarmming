@@ -1,6 +1,6 @@
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+//import com.acmerobotics.dashboard.FtcDashboard;
+//import com.acmerobotics.dashboard.config.Config;
+//import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import java.io.File;
 import java.io.IOException;
-@Config
+//@Config
 @TeleOp(name = "TournamentOpMode V1.0 [Updated 12/5/24]")
 public class TournamentOpMode extends LinearOpMode
 
@@ -100,7 +100,7 @@ public class TournamentOpMode extends LinearOpMode
         //Called continuously while OpMode is active
         while(opModeIsActive()) {
 
-            telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+//            telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
             //region: PID code
 //            armPivot.

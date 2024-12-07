@@ -1,20 +1,17 @@
-
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+//import com.acmerobotics.dashboard.FtcDashboard;
+//import com.acmerobotics.dashboard.config.Config;
+//import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import HelpfulFunctions.Dijkstra.*;
+import HelpfulFunctions.Dijkstra.Field;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@Config
-@Autonomous(name = "FICLK0")
-public class Bttmleft extends LinearOpMode {
+//@Config
+@Autonomous(name = "Left Front Autonomous")
+public class LeftFrontAutonomous extends LinearOpMode {
     //region: Creating Variables
     //these variables correspond to servos and motors. They are displayed in order of distance to Control Hub.
     private DcMotor WheelMotorLeftFront;
@@ -37,11 +34,13 @@ public class Bttmleft extends LinearOpMode {
     private boolean runOnce;
     //endregion
 
+    private DcMotorEx armPivot;
+
     @Override
     public void runOpMode() throws InterruptedException {
         //region: Initializing Variables
         //These variables do NOT correspond to a physical object; they are entirely digital and for coding purposes.
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+//        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         float speedMultipler = 0.4f;
         ticksPerRevolution = 537.7f;
         wheelCircumference = 11.8737f;
@@ -52,6 +51,7 @@ public class Bttmleft extends LinearOpMode {
         gameField = new Field("3-1");
         taskNumber = 0;
         runOnce = true;
+        armPivot = hardwareMap.get(DcMotorEx.class, "armPivot");
 
 
         //This section maps the variables to their corresponding motors/servos
@@ -95,151 +95,34 @@ public class Bttmleft extends LinearOpMode {
             Circumference = 3.780"
             float ticksPerRevolution = ((((1+(46/17))) * (1+(46/11))) * 28);
             ticksPerRevolution = 537.7
+            Left 6.5 inches, Down 10 inches
              */
-
-            List<String> steps = new ArrayList<>();//gameField.getInstructionsList("3-1", "3-2");
-            steps.add("right");
-            telemetry.addData("STEPS", steps);
-            telemetry.update();
             while(true) {
                 if(runOnce) {
                     runOnce = false;
-                    String task = "";
-                    try {
-                        task = steps.get(taskNumber);
-                    }
-                    catch(Exception e) {
-                        break;
-                    }
-                    moveDirectionInInches(task, 24);
-                    target = WheelMotorLeftFront.getTargetPosition();
+                    moveDirectionInInches("Right", 36);
                 }
 
-                if(WheelMotorLeftFront.getCurrentPosition() == target) {
-                    runOnce = true;
-                    taskNumber += 1;
-                    target = Integer.MAX_VALUE;
+                if(WheelMotorLeftFront.getCurrentPosition() == WheelMotorLeftFront.getTargetPosition()) {
+                    break;
                 }
             }
-
             resetTask();
-            //steps = gameField.getInstructionsList("3-2", "6-2");
-            steps = new ArrayList<>();//gameField.getInstructionsList("6-2", "2-2");
-            steps.add("forward");
-            steps.add("forward");
-            steps.add("forward");
-            telemetry.addData("STEPS", steps);
-            telemetry.update();
             while(true) {
                 if(runOnce) {
                     runOnce = false;
-                    String task = "";
-                    try {
-                        task = steps.get(taskNumber);
-                    }
-                    catch(Exception e) {
-                        break;
-                    }
-                    moveDirectionInInches(task, 24);
-                    target = WheelMotorLeftFront.getTargetPosition();
+                    rotateInDegrees(180);
                 }
 
-                if(WheelMotorLeftFront.getCurrentPosition() == target) {
-                    runOnce = true;
-                    taskNumber += 1;
-                    target = Integer.MAX_VALUE;
+                if(WheelMotorLeftFront.getTargetPosition() == WheelMotorLeftFront.getCurrentPosition()) {
+                    break;
                 }
             }
-
-            resetTask();
-            steps = new ArrayList<>();//gameField.getInstructionsList("6-2", "2-2");
-            steps.add("back");
-            steps.add("back");
-            steps.add("back");
-            steps.add("back");
-            telemetry.addData("STEPS", steps);
-            telemetry.update();
-            while(true) {
-                if(runOnce) {
-                    runOnce = false;
-                    String task = "";
-                    try {
-                        task = steps.get(taskNumber);
-                    }
-                    catch(Exception e) {
-                        break;
-                    }
-                    moveDirectionInInches(task, 24);
-                    target = WheelMotorLeftFront.getTargetPosition();
-                }
-
-                if(WheelMotorLeftFront.getCurrentPosition() == target) {
-                    runOnce = true;
-                    taskNumber += 1;
-                    target = Integer.MAX_VALUE;
-                }
-            }
-
-
-            resetTask();
-            steps = new ArrayList<>();//gameField.getInstructionsList("6-2", "2-2");
-            steps.add("forward");
-            steps.add("forward");
-            steps.add("forward");
-            steps.add("forward");
-            telemetry.addData("STEPS", steps);
-            telemetry.update();
-            while(true) {
-                if(runOnce) {
-                    runOnce = false;
-                    String task = "";
-                    try {
-                        task = steps.get(taskNumber);
-                    }
-                    catch(Exception e) {
-                        break;
-                    }
-                    moveDirectionInInches(task, 24);
-                    target = WheelMotorLeftFront.getTargetPosition();
-                }
-
-                if(WheelMotorLeftFront.getCurrentPosition() == target) {
-                    runOnce = true;
-                    taskNumber += 1;
-                    target = Integer.MAX_VALUE;
-                }
-            }
-
-
             resetTask();
 
-
-
-            telemetry.update();
-            stop();
-            break;
-            /*
-            PSUEDOSTEPS
-             */
-
-//
-//
-//            if(task == 0 && runOnce) {
-//                runOnce = false;
-//                moveDirectionInInches("right", 24);
-//            }
-//            if(task == 1 && runOnce) {
-//                runOnce = false;
-//                moveDirectionInInches("left", 24);
-//            }
-//
-//
-//            if(WheelMotorLeftFront.getCurrentPosition() == target) {
-//                runOnce = true;
-//                task += 1;
-//                target = 0;
-//            }
-
+            armPivot.setTargetPosition(150);
+            armPivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            armPivot.setPower(1);
         }
     }
 

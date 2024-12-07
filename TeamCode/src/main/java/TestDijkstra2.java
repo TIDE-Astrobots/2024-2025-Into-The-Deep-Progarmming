@@ -1,7 +1,8 @@
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+//import com.acmerobotics.dashboard.FtcDashboard;
+//import com.acmerobotics.dashboard.config.Config;
+//import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import HelpfulFunctions.Dijkstra.*;
@@ -16,7 +17,8 @@ TODO: Figure out how to know if the next position is in front, behind, to the le
 TODO: Figure out how to translate the amount of nodes that it should go in one direction to a distance
 TODO: Have it set to a sequence so that it does all this without me having to worry about it
  */
-@Config
+//@Config
+@Disabled
 @Autonomous(name="TestDijkstra2")
 public class TestDijkstra2 extends LinearOpMode {
     @Override
@@ -43,7 +45,7 @@ public class TestDijkstra2 extends LinearOpMode {
             telemetry.addData("Directions in robot form: ", field.getInstructionsList("6-2", "2-2"));
 
 
-            telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+//            telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
             telemetry.update();
         }
     }

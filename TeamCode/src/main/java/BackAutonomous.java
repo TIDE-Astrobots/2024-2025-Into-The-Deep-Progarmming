@@ -1,22 +1,21 @@
+//
 //import com.acmerobotics.dashboard.FtcDashboard;
 //import com.acmerobotics.dashboard.config.Config;
 //import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import HelpfulFunctions.MotorFunctions;
+
 import HelpfulFunctions.Dijkstra.*;
 
 import java.util.ArrayList;
 import java.util.List;
-//
+
 //@Config
-@Disabled
-@Autonomous(name = "AutonTesting V1.1")
-public class AutonTesting extends LinearOpMode {
+@Autonomous(name = "BackAutonomous")
+public class BackAutonomous extends LinearOpMode {
     //region: Creating Variables
     //these variables correspond to servos and motors. They are displayed in order of distance to Control Hub.
     private DcMotor WheelMotorLeftFront;
@@ -33,10 +32,13 @@ public class AutonTesting extends LinearOpMode {
     private float wheelSideLength;
     private float dist;
     private float rot;
-    private int task;
     private int target;
     private Field gameField;
+    private int taskNumber;
+    private boolean runOnce;
     //endregion
+
+    private DcMotorEx armPivot;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -49,9 +51,12 @@ public class AutonTesting extends LinearOpMode {
         wheelSideLength = 1.486f;
         dist = -36f;
         rot = 180f;
-        task = 0;
         target = Integer.MAX_VALUE;
-        \
+        gameField = new Field("3-1");
+        taskNumber = 0;
+        runOnce = true;
+        armPivot = hardwareMap.get(DcMotorEx.class, "armPivot");
+
 
         //This section maps the variables to their corresponding motors/servos
         WheelMotorLeftFront = HelpfulFunctions.MotorFunctions.initializeMotor("WheelMotorLeftFront", hardwareMap);
@@ -87,27 +92,28 @@ public class AutonTesting extends LinearOpMode {
         //Wait for the user to press start
         waitForStart();
         //called continuously while OpMode is active
-        int taskNumber = 0;
-        boolean runOnce = true;
+
         while(opModeIsActive()) {
             /*
             Measurements:
             Circumference = 3.780"
             float ticksPerRevolution = ((((1+(46/17))) * (1+(46/11))) * 28);
             ticksPerRevolution = 537.7
-            ticksPerExtendoMaximum =~ 3000
+            Left 6.5 inches, Down 10 inches
              */
+            if(runOnce) {
+                moveDirectionInInches("Back", 48);
+            }
 
-            extendoLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            extendoRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            extendoLeft.setPower(0.5);
-            extendoRight.setPower(0.5);
-            telemetry.addData("extendeLeft Position", extendoLeft.getCurrentPosition());
-            telemetry.addData("extendeRight Position", extendoRight.getCurrentPosition());
-            telemetry.update();
+
         }
     }
 
+    public void resetTask() {
+        taskNumber = 0;
+        target = Integer.MAX_VALUE;
+        runOnce = true;
+    }
     public void moveDirectionInInches(String direction, float distance) {
         if(direction == "right") {
             moveDistanceInInchesRight(distance);
@@ -122,30 +128,29 @@ public class AutonTesting extends LinearOpMode {
             moveDistanceInInches(-distance);
         }
     }
-public void rotateInDegrees(float degrees)
-{
-    int magnitude = (int) Math.round(4600 * Math.sin((Math.PI/180) * degrees/6.325));
-    WheelMotorLeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    WheelMotorLeftFront.setTargetPosition(magnitude);
-    WheelMotorLeftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    target = magnitude;
+    public void rotateInDegrees(float degrees) {
+        int magnitude = (int) Math.round(4600 * Math.sin((Math.PI/180) * degrees/6.325));
+        WheelMotorLeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        WheelMotorLeftFront.setTargetPosition(magnitude);
+        WheelMotorLeftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        target = magnitude;
 
-    WheelMotorLeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    WheelMotorLeftBack.setTargetPosition(magnitude);
-    WheelMotorLeftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        WheelMotorLeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        WheelMotorLeftBack.setTargetPosition(magnitude);
+        WheelMotorLeftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-    WheelMotorRightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    WheelMotorRightFront.setTargetPosition(-magnitude);
-    WheelMotorRightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        WheelMotorRightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        WheelMotorRightFront.setTargetPosition(-magnitude);
+        WheelMotorRightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-    WheelMotorRightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    WheelMotorRightBack.setTargetPosition(-magnitude);
-    WheelMotorRightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    for(DcMotor motor : WheelMotors) {
-        motor.setPower(0.25);
+        WheelMotorRightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        WheelMotorRightBack.setTargetPosition(-magnitude);
+        WheelMotorRightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        for(DcMotor motor : WheelMotors) {
+            motor.setPower(0.25);
+        }
     }
-}
-public void moveDistanceInInchesRight(float distance) {
+    public void moveDistanceInInchesRight(float distance) {
         int magnitude = Math.round((distance/wheelSideLength) * (ticksPerRevolution * (wheelSideLength/wheelCircumference)));
         WheelMotorLeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         WheelMotorLeftFront.setTargetPosition(magnitude);
@@ -166,7 +171,7 @@ public void moveDistanceInInchesRight(float distance) {
         for(DcMotor motor : WheelMotors) {
             motor.setPower(0.25);
         }
-}
+    }
     public void moveDistanceInInches(float distance) {
         for(DcMotor motor : WheelMotors) {
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

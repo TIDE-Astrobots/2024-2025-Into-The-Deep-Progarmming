@@ -1,7 +1,8 @@
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+//import com.acmerobotics.dashboard.FtcDashboard;
+//import com.acmerobotics.dashboard.config.Config;
+//import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -14,7 +15,8 @@ import HelpfulFunctions.Dijkstra.*;
 import java.io.PrintStream;
 import java.util.Iterator;
 
-@Config
+//@Config
+@Disabled
 @Autonomous(name="TestDijkstra")
 public class TestDijkstra extends LinearOpMode {
     @Override
@@ -172,7 +174,7 @@ public class TestDijkstra extends LinearOpMode {
 
             }
 
-            telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+//            telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
             telemetry.update();
         }
     }
