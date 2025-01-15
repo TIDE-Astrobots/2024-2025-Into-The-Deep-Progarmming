@@ -10,7 +10,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+<<<<<<< Updated upstream
 @TeleOp(name = "TournamentOpMode V1.0 [Updated 11/14/24]")
+=======
+import java.io.File;
+import java.io.IOException;
+@Config
+@TeleOp(name = "TournamentOpMode V1.0.2 [Updated 1/9/25]")
+>>>>>>> Stashed changes
 public class TournamentOpMode extends LinearOpMode
 
 {
@@ -35,6 +42,7 @@ public class TournamentOpMode extends LinearOpMode
     double Kf = 0;
     ElapsedTime timer = new ElapsedTime();
     double lastError = 0;
+    boolean halfSpeed = false;
     //endregion
 
     @Override
@@ -62,6 +70,10 @@ public class TournamentOpMode extends LinearOpMode
         //Use BRAKE zero power behavior so that the motors do not allow the arms to move when no power is applied
         extendoLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         extendoRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        extendoLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extendoRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extendoLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        extendoRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 //        armPivot = HelpfulFunctions.MotorFunctions.initializeMotor("armPivot", hardwareMap);
         armPivot = hardwareMap.get(DcMotorEx.class,"armPivot");
@@ -119,11 +131,27 @@ public class TournamentOpMode extends LinearOpMode
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio,
             // but only if at least one is out of the range [-1, 1]
+<<<<<<< Updated upstream
             double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
             double WheelMotorFrontLeftPower = (rotY + rotX + rx) / denominator;
             double WheelMotorBackLeftPower = (rotY - rotX + rx) / denominator;
             double WheelMotorFrontRightPower = (rotY - rotX - rx) / denominator;
             double WheelMotorBackRightPower = (rotY + rotX - rx) / denominator;
+=======
+            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+            
+            //Allow the users to move at half speed if they are holding A
+            if (gamepad1.cross && !halfSpeed) {
+                //Apply half the power
+                halfSpeed = true;
+            }
+            else if (gamepad1.circle && halfSpeed) {
+                halfSpeed = false;
+            }
+            if(halfSpeed) {
+                denominator = denominator * 4;
+            }
+>>>>>>> Stashed changes
 
             //Allow the users to move at half speed if they are holding A
             if(gamepad1.a) {
@@ -139,6 +167,7 @@ public class TournamentOpMode extends LinearOpMode
             WheelMotorLeftBack.setPower(WheelMotorBackLeftPower);
             WheelMotorRightFront.setPower(WheelMotorFrontRightPower);
             WheelMotorRightBack.setPower(WheelMotorBackRightPower);
+<<<<<<< Updated upstream
             //endregion
 
             //region: ArmPivot Controls
@@ -160,6 +189,13 @@ public class TournamentOpMode extends LinearOpMode
 //            }
             else if(armPivot.getCurrentPosition() < armPivotTarget - 6) {
                 armPivot.setPower(0.5);
+=======
+            if(gamepad2.triangle) {
+                armPivot.setPower(0.45);
+            }
+            else if (gamepad2.cross) {
+                armPivot.setPower(-0.45);
+>>>>>>> Stashed changes
             }
             else {
                 armPivot.setPower(0);
@@ -249,7 +285,14 @@ public class TournamentOpMode extends LinearOpMode
                 clawServo.setPosition(0);
             }
             //endregion
+<<<<<<< Updated upstream
 
+=======
+            telemetry.addData("ExtendoLeft", extendoLeft.getCurrentPosition());
+            telemetry.addData("ExtendoRight", extendoRight.getCurrentPosition());
+            telemetry.addData("Arm position", armPivot.getCurrentPosition());
+            telemetry.addData("Claw Position", clawServo.getPosition());
+>>>>>>> Stashed changes
             telemetry.update();
         }
     }
