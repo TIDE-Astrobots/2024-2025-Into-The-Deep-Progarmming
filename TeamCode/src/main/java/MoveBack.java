@@ -1,6 +1,3 @@
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -12,7 +9,6 @@ import HelpfulFunctions.Dijkstra.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Config
 @Autonomous(name = "Move Back 2 Tiles")
 public class MoveBack extends LinearOpMode {
     //region: Creating Variables
@@ -42,7 +38,6 @@ public class MoveBack extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         //region: Initializing Variables
         //These variables do NOT correspond to a physical object; they are entirely digital and for coding purposes.
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         float speedMultipler = 0.4f;
         ticksPerRevolution = 537.7f;
         wheelCircumference = 11.8737f;
