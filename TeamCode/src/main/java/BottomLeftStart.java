@@ -1,6 +1,6 @@
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+//import com.acmerobotics.dashboard.FtcDashboard;
+//import com.acmerobotics.dashboard.config.Config;
+//import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -19,7 +19,7 @@ import java.util.List;
 Some important notes:
 - The claw servo starts at 0 here and 1 on the tournament opMode for some reason
  */
-@Config
+//@Config
 @Autonomous(name = "Upper Left V0.1.67")
 public class BottomLeftStart extends LinearOpMode {
     //region: Creating Variables
@@ -52,7 +52,7 @@ public class BottomLeftStart extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         //region: Initializing Variables
         //These variables do NOT correspond to a physical object; they are entirely digital and for coding purposes.
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+//        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         float speedMultipler = 0.4f;
         ticksPerRevolution = 537.7f;
         wheelCircumference = 11.8737f;
